@@ -134,3 +134,16 @@ def add_movies_to_trakt_list(media_list, list_slug):
         raise Exception(f"Failed to add movies to the list {list_slug}. Response: {response.text}")
 
     return response.json()
+
+def get_trakt_item(id):
+    url = f"{TRAKT_API_BASE_URL}/movies/{id}?extended=full"
+
+    headers = generate_headers()
+
+    response = trakt_request("GET", url, headers=headers)
+    
+    # Check if the response is successful
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()  # Raise an exception for HTTP errors

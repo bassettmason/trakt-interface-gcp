@@ -25,13 +25,13 @@ def trakt_api_handler(request):
 
     # Handling GET requests
     elif request.method == 'GET':
-        list_slug = request.args.get("list_slug")
-        if not list_slug:
-            logging.warning("Missing 'list_slug'.")
-            return ({"error": "Missing list_slug."}, 400, headers)
+        id = request.args.get("id")
+        if not id:
+            logging.warning("Missing 'id'.")
+            return ({"error": "Missing id."}, 400, headers)
 
         try:
-            data = get_trakt_list(list_slug)
+            data = get_trakt_item(id)
             return (data, 200, headers)
         except Exception as e:
             logging.error(f"Failed to get Trakt list: {e}")
