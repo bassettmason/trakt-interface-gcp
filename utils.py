@@ -29,9 +29,12 @@ def get_trakt_list(list_slug):
         slug = list_data["ids"]["slug"]
         return {"trakt_list_id": trakt_id, "trakt_list_slug": slug}
     elif response.status_code == 404:  # Resource not found
+        print(f"List {list_slug} not found on Trakt.")
         return None
     else:
-        response.raise_for_status()  # Raise an exception for other HTTP errors
+        print(f"Error while fetching Trakt list: {response.status_code}")
+        return None
+
 
 def create_trakt_list(list_slug):
     """Create a new list with the given name on Trakt."""
