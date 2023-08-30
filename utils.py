@@ -37,7 +37,7 @@ def create_trakt_list(list_slug):
     """Create a new list with the given name on Trakt."""
     url = f"{TRAKT_API_BASE_URL}/users/bassettmason/lists"
     data = {
-        "name": f"{list_slug.replace("-", " ")}",
+        "name": f"{list_slug.replace('-', ' ')}",
         "description": "List created from MediaDjinn",
         "privacy": "public",
         "display_numbers": True,
