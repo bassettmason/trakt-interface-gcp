@@ -78,10 +78,10 @@ def generate_headers():
         "Authorization": f"Bearer {trakt_secret['OAUTH_TOKEN']}"
     }
 
-
 def trakt_request(method, url, **kwargs):
     # Constants for rate limits
     POST_LIMIT_DELAY = 1  # 1 second delay for POST, PUT, DELETE
+    POST_REQUEST_DELAY = 4  # 5-second delay after every POST request
     GET_LIMIT_DELAY = 5 * 60 / 1000  # 5 minutes for 1000 requests for GET, roughly 0.3 second per request
 
     headers = kwargs.get('headers', {})
@@ -89,13 +89,15 @@ def trakt_request(method, url, **kwargs):
     # First, attempt the request
     response = requests.request(method, url, **kwargs)
 
+    # Introduce a delay after every POST request
+    if method == "POST":
+        time.sleep(POST_REQUEST_DELAY)
+
     # Handle rate limiting based on the HTTP method
     if response.status_code == 429:  # 429 HTTP status code indicates rate limit exceeded
         if method in ["POST", "PUT", "DELETE"]:
             time.sleep(POST_LIMIT_DELAY)
         else:  # GET
-            # If you're hitting the rate limit for GET, it's a bit tricky since you're likely making requests too fast.
-            # One way is to throttle each GET request, but this might slow down your app considerably. For now, we'll use a basic delay:
             time.sleep(GET_LIMIT_DELAY)
 
         # Retry the request after waiting
@@ -103,3 +105,4 @@ def trakt_request(method, url, **kwargs):
 
     response.raise_for_status()  # If the retry or the original request was unsuccessful, raise an exception.
     return response
+

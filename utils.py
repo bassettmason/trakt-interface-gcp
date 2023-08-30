@@ -46,7 +46,7 @@ def create_trakt_list(list_slug):
         "sort_how": "asc"
     }
     
-    response = trakt_request("POST", url, headers=headers, json=data)
+    response = trakt_request("POST", url, headers=generate_headers(), json=data)
     
     if response.status_code != 201:
         raise Exception("Failed to create list. Please check your credentials and list name.")
