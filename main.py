@@ -1,24 +1,40 @@
 import logging
-# from request_functions import get_function
+from utils import post_trakt_list_from_imdb_ids, get_trakt_list
 
-def get_something(request):
+def trakt_api_handler(request):
 
-    arg1 = request.args.get("arg1")
-
+    action = request.args.get("action")
     headers = {"Content-Type": "application/json"}
 
-    if not arg1:
-        logging.warning("Missing 'arg1' parameter")
-        return ({"error": "Missing arg1 parameter"}, 400, headers)
+    if action == "post":
+        data = request.get_json(silent=True)  # Get JSON body
+        
+        list_slug = data.get("name")
+        list_data = data.get("media_list")  # Extract media list from JSON body
 
-    try:
-        # data = get_function(arg1)
-        pass # remove this
-    except Exception as e:
-        logging.error(f"Failed to retrieve data for {arg1}: {e}")
-        return ({"error": str(e)}, 500, headers)
+        if not list_slug or not list_data:
+            logging.warning("Missing 'name' or 'media_list' in request data.")
+            return ({"error": "Missing 'name' or 'media_list' in request data."}, 400, headers)
 
-    logging.info(f"Successfully retrieved data for {arg1}.")
-    logging.debug(f"data details: {data}")
+        try:
+            response = post_trakt_list_from_imdb_ids(list_slug, list_data)
+            return (response, 200, headers)
+        except Exception as e:
+            logging.error(f"Failed to post Trakt list: {e}")
+            return ({"error": str(e)}, 500, headers)
 
-    return (data, 200, headers)
+    elif action == "get":
+        list_slug = request.args.get("list_slug")
+        if not list_name:
+            logging.warning("Missing 'list_slug'.")
+            return ({"error": "Missing list_slug."}, 400, headers)
+
+        try:
+            data = get_trakt_list(list_slug)
+            return (data, 200, headers)
+        except Exception as e:
+            logging.error(f"Failed to get Trakt list: {e}")
+            return ({"error": str(e)}, 500, headers)
+
+    else:
+        return ({"error": "Invalid action. Use either 'post' or 'get'."}, 400, headers)
