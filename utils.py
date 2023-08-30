@@ -20,20 +20,15 @@ def get_trakt_list(list_slug):
 
     headers = generate_headers()
 
-    response = trakt_request("GET", url, headers=headers)
-
-    # Check if the list exists
-    if response.status_code == 200:
-        list_data = response.json()
-        trakt_id = list_data["ids"]["trakt"]
-        slug = list_data["ids"]["slug"]
-        return {"trakt_list_id": trakt_id, "trakt_list_slug": slug}
-    elif response.status_code == 404:  # Resource not found
-        print(f"List {list_slug} not found on Trakt.")
-        return None
-    else:
-        print(f"Error while fetching Trakt list: {response.status_code}")
-        return None
+    try:
+        response = trakt_request("GET", url, headers=headers)
+    except requests.HTTPError as e:
+        if e.response.status_code == 404:
+            print(f"List {list_slug} not found on Trakt.")
+            return None
+        else:
+            print(f"Error while fetching Trakt list: {e.response.status_code}")
+            return None
 
 
 def create_trakt_list(list_slug):
