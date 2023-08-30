@@ -3,10 +3,10 @@ from utils import post_trakt_list_from_imdb_ids, get_trakt_list
 
 def trakt_api_handler(request):
 
-    action = request.args.get("action")
     headers = {"Content-Type": "application/json"}
 
-    if action == "post":
+    # Handling POST requests
+    if request.method == 'POST':
         data = request.get_json(silent=True)  # Get JSON body
         
         list_slug = data.get("name")
@@ -23,9 +23,10 @@ def trakt_api_handler(request):
             logging.error(f"Failed to post Trakt list: {e}")
             return ({"error": str(e)}, 500, headers)
 
-    elif action == "get":
+    # Handling GET requests
+    elif request.method == 'GET':
         list_slug = request.args.get("list_slug")
-        if not list_name:
+        if not list_slug:
             logging.warning("Missing 'list_slug'.")
             return ({"error": "Missing list_slug."}, 400, headers)
 
@@ -37,4 +38,4 @@ def trakt_api_handler(request):
             return ({"error": str(e)}, 500, headers)
 
     else:
-        return ({"error": "Invalid action. Use either 'post' or 'get'."}, 400, headers)
+        return ({"error": "Invalid HTTP method. Use either POST or GET."}, 400, headers)
