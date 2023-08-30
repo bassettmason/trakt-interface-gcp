@@ -46,7 +46,7 @@ jobs:
       with:
         name: 'trakt-interface-gcp'
         runtime: 'python310'
-        entry_point: 'movie_db'
+        entry_point: 'trakt_api_handler'
         region: 'us-west1'
         project_id: 'media-djinn'
 
