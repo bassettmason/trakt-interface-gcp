@@ -15,16 +15,23 @@ def post_trakt_list_from_imdb_ids(list_slug, media_list):
     return new_trakt_list_items
 
 def get_trakt_list(list_slug):
-
-    url = f"{TRAKT_API_BASE_URL}/users/bassettmason/lists/{list_slug}"
-
+    url = f"{TRAKT_API_BASE_URL}/users/bassettmason/lists"
     headers = generate_headers()
-
+    
     try:
-        response = requests.get(url, headers=headers)
-        return response.json()
-    except requests.HTTPError as e:
-        return None
+        response = trakt_request("GET", url, headers=headers)
+        user_lists = response.json()
+        
+        # Check if list_slug.replace("-", " ") matches any name in the lists
+        for lst in user_lists:
+            if lst["name"] == list_slug.replace("-", " "):
+                return lst
+
+    except requests.HTTPError:
+        print("Error fetching lists.")
+    
+    return None
+
 
 
 def create_trakt_list(list_slug):
