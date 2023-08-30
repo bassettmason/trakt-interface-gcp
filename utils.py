@@ -12,7 +12,13 @@ def post_trakt_list_from_imdb_ids(list_slug, media_list):
 
     response = add_movies_to_trakt_list(media_list, list_slug)
     new_trakt_list_items = get_trakt_list_items(list_slug)
-    return new_trakt_list_items
+    return format_return_data(new_trakt_list_items)
+
+def format_return_data(trakt_list_items):
+    # Extract 'movie' parts using list comprehension
+    formatted_list = [item['movie'] for item in trakt_list_items if 'movie' in item]
+    return formatted_list
+
 
 def get_trakt_list(list_slug):
     url = f"{TRAKT_API_BASE_URL}/users/bassettmason/lists"
