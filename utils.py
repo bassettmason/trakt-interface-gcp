@@ -21,14 +21,10 @@ def get_trakt_list(list_slug):
     headers = generate_headers()
 
     try:
-        response = trakt_request("GET", url, headers=headers)
+        response = requests.get(url, headers=headers)
+        return response.json()
     except requests.HTTPError as e:
-        if e.response.status_code == 404:
-            print(f"List {list_slug} not found on Trakt.")
-            return None
-        else:
-            print(f"Error while fetching Trakt list: {e.response.status_code}")
-            return None
+        return None
 
 
 def create_trakt_list(list_slug):
