@@ -12,12 +12,16 @@ def post_trakt_list_from_imdb_ids(list_slug, media_list):
 
     response = add_movies_to_trakt_list(media_list, list_slug)
     new_trakt_list_items = get_trakt_list_items(list_slug)
-    return format_return_data(new_trakt_list_items)
+    return new_trakt_list_items
 
-def format_return_data(trakt_list_items):
-    # Extract 'movie' parts using list comprehension
-    formatted_list = [item['movie'] for item in trakt_list_items if 'movie' in item]
-    return formatted_list
+def format_return_data(trakt_list_item):
+    # Extract the rating value
+    rating_value = trakt_list_item.get("rating")
+    
+    # Modify the rating key to have the new format
+    trakt_list_item["rating"] = {"trakt": rating_value}
+    
+    return trakt_list_item
 
 
 def get_trakt_list(list_slug):
