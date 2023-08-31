@@ -1,5 +1,5 @@
 import logging
-from utils import post_trakt_list_from_imdb_ids, get_trakt_list
+from utils import post_trakt_list_from_imdb_ids, get_trakt_list, get_trakt_item
 
 def trakt_api_handler(request):
 
