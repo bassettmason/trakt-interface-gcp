@@ -148,6 +148,6 @@ def get_trakt_item(id):
     
     # Check if the response is successful
     if response.status_code == 200:
-        return response.json()
+        return format_return_data(response.json())
     else:
         response.raise_for_status()  # Raise an exception for HTTP errors
